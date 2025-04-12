@@ -1,6 +1,6 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 interface WidgetProps {
   id: string;
@@ -22,7 +22,8 @@ const Widget: React.FC<WidgetProps> = ({
   onClose,
   width = 300,
   className,
-  hideControls = false
+  hideControls = false,
+  type
 }) => {
   const widgetRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +41,9 @@ const Widget: React.FC<WidgetProps> = ({
     widget.style.left = `${position.x}px`;
     widget.style.top = `${position.y}px`;
     
+    // Set id attribute for direct DOM access if needed
+    widget.id = id;
+    
     // Mouse event handlers
     const handleMouseDown = (e: MouseEvent) => {
       setIsDragging(true);
@@ -49,29 +53,35 @@ const Widget: React.FC<WidgetProps> = ({
         y: e.clientY - rect.top
       });
       widget.style.zIndex = '10';
+      widget.style.transition = 'none'; // Disable transitions while dragging for smoother movement
     };
     
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
       
-      const x = e.clientX - dragOffset.x;
-      const y = e.clientY - dragOffset.y;
-      
-      // Constrain to window bounds
-      const maxX = window.innerWidth - widget.offsetWidth;
-      const maxY = window.innerHeight - widget.offsetHeight;
-      
-      const constrainedX = Math.max(0, Math.min(x, maxX));
-      const constrainedY = Math.max(0, Math.min(y, maxY));
-      
-      widget.style.left = `${constrainedX}px`;
-      widget.style.top = `${constrainedY}px`;
-      
-      setPosition({ x: constrainedX, y: constrainedY });
+      requestAnimationFrame(() => {
+        const x = e.clientX - dragOffset.x;
+        const y = e.clientY - dragOffset.y;
+        
+        // Constrain to window bounds
+        const maxX = window.innerWidth - widget.offsetWidth;
+        const maxY = window.innerHeight - widget.offsetHeight;
+        
+        const constrainedX = Math.max(0, Math.min(x, maxX));
+        const constrainedY = Math.max(0, Math.min(y, maxY));
+        
+        widget.style.left = `${constrainedX}px`;
+        widget.style.top = `${constrainedY}px`;
+        
+        setPosition({ x: constrainedX, y: constrainedY });
+      });
     };
     
     const handleMouseUp = () => {
-      setIsDragging(false);
+      if (isDragging) {
+        widget.style.transition = ''; // Re-enable transitions
+        setIsDragging(false);
+      }
     };
     
     // Add event listeners to the header for dragging
@@ -103,6 +113,7 @@ const Widget: React.FC<WidgetProps> = ({
   return (
     <div 
       ref={widgetRef}
+      id={id}
       className={cn(
         'glass-widget absolute animate-fade-in widget',
         hideControls ? 'widget-no-controls' : '',
@@ -115,7 +126,8 @@ const Widget: React.FC<WidgetProps> = ({
         ref={headerRef} 
         className={cn(
           "widget-header", 
-          hideControls ? 'p-3 justify-center' : ''
+          hideControls ? 'p-3 justify-center' : '',
+          "relative" // Add relative positioning for absolute positioned close button
         )}
       >
         {!hideControls && (
@@ -131,11 +143,18 @@ const Widget: React.FC<WidgetProps> = ({
         )}>
           {title}
         </div>
-        {!hideControls && (
-          <div className="ml-auto">
-            {/* Optional action icons could go here */}
-          </div>
-        )}
+        
+        {/* Explicit close button - always visible */}
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose(id);
+          }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+          aria-label="Close widget"
+        >
+          <X size={16} />
+        </button>
       </div>
       <div className="widget-body">
         {children}
