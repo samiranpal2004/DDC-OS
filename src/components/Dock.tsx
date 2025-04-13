@@ -1,13 +1,16 @@
-
-import { Clock, FileText, Cloud, Calculator, ListTodo, Search, Image, Quote } from 'lucide-react';
+import { Clock, FileText, Cloud, Calculator, ListTodo, Search, Image, Quote, Bell } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useNotificationContext } from '@/contexts/notification-context';
 
 interface DockProps {
   onAddWidget: (type: string) => void;
   onToggleWallpaper: () => void;
+  onToggleNotifications: () => void;
 }
 
-const Dock: React.FC<DockProps> = ({ onAddWidget, onToggleWallpaper }) => {
+const Dock: React.FC<DockProps> = ({ onAddWidget, onToggleWallpaper, onToggleNotifications }) => {
+  const { unreadCount } = useNotificationContext();
+  
   return (
     <div className="dock animate-fade-in">
       <TooltipProvider delayDuration={300}>
@@ -85,6 +88,22 @@ const Dock: React.FC<DockProps> = ({ onAddWidget, onToggleWallpaper }) => {
           </TooltipTrigger>
           <TooltipContent side="top">
             <p>Quote Widget</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="dock-item relative" onClick={onToggleNotifications}>
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top">
+            <p>Notifications</p>
           </TooltipContent>
         </Tooltip>
 
