@@ -8,7 +8,6 @@ import NotesWidget from '@/components/widgets/NotesWidget';
 import WeatherWidget from '@/components/widgets/WeatherWidget';
 import CalculatorWidget from '@/components/widgets/CalculatorWidget';
 import TodoWidget from '@/components/widgets/TodoWidget';
-import SearchWidget from '@/components/widgets/SearchWidget';
 import QuoteWidget from '@/components/widgets/QuoteWidget';
 import NotificationCenterWidget from '@/components/widgets/NotificationCenterWidget';
 import { Bell, Settings } from 'lucide-react';
@@ -268,8 +267,6 @@ const Index = () => {
         return <CalculatorWidget />;
       case 'todo':
         return <TodoWidget />;
-      case 'search':
-        return <SearchWidget />;
       case 'quote':
         return <QuoteWidget />;
       case 'notification':
@@ -304,8 +301,6 @@ const Index = () => {
         return 'Calculator';
       case 'todo':
         return 'To-Do List';
-      case 'search':
-        return 'Search';
       case 'quote':
         return 'Quote';
       case 'notification':
@@ -336,7 +331,6 @@ const Index = () => {
       notes: 300,
       weather: 300,
       todo: 300,
-      search: 300,
       notification: 350,
       'youtube-player': 480,
       'poll-form': 600,
@@ -370,35 +364,18 @@ const Index = () => {
   };
   
   return (
-    <div 
-      className="min-h-screen overflow-hidden relative"
-      style={{ 
-        backgroundImage: `url(${wallpaper})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
-      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50" />
-      <WaveBackground />
-      
-      <div className="fixed right-4 top-4 flex items-center gap-3 text-white text-lg z-10">
-        {notificationPermission !== 'granted' && (
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={requestNotificationPermission}
-            className="text-white"
-          >
-            Enable Notifications
-          </Button>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Background */}
+      <div className="fixed inset-0 z-0">
+        {wallpaper ? (
+          <img
+            src={wallpaper}
+            alt="Wallpaper"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <WaveBackground />
         )}
-        
-        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-      </div>
-      
-      {/* Global search at top */}
-      <div className="fixed top-2 left-1/2 transform -translate-x-1/2 w-96 z-10">
-        <SearchWidget />
       </div>
       
       {/* Notification action handler */}
