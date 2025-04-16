@@ -8,7 +8,6 @@ import NotesWidget from '@/components/widgets/NotesWidget';
 import WeatherWidget from '@/components/widgets/WeatherWidget';
 import CalculatorWidget from '@/components/widgets/CalculatorWidget';
 import TodoWidget from '@/components/widgets/TodoWidget';
-import QuoteWidget from '@/components/widgets/QuoteWidget';
 import NotificationCenterWidget from '@/components/widgets/NotificationCenterWidget';
 import { Bell, Settings } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -21,6 +20,7 @@ import EventDetailsWidget from '@/components/widgets/EventDetailsWidget';
 import ProblemDetailsWidget from '@/components/widgets/ProblemDetailsWidget';
 import PollFormWidget from '@/components/widgets/PollFormWidget';
 import MeetingDetailsWidget from '@/components/widgets/MeetingDetailsWidget';
+import Quote from '@/components/Quote';
 
 const DEFAULT_WALLPAPERS = [
   'https://images.unsplash.com/photo-1662026911591-335639b11db6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY2MzY5MTI4MQ&ixlib=rb-1.2.1&q=80&w=1920',
@@ -97,11 +97,6 @@ const Index = () => {
           id: 'widget-2',
           type: 'weather',
           position: { x: window.innerWidth - 400, y: 100 }
-        },
-        {
-          id: 'widget-3',
-          type: 'quote',
-          position: { x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 50 }
         }
       ];
       
@@ -163,6 +158,22 @@ const Index = () => {
     // Don't add notification widget - it's shown as a fixed panel
     if (type === 'notification') {
       toggleNotificationPanel();
+      return;
+    }
+    
+    // Check if a widget of this type already exists
+    const existingWidget = widgets.find(widget => widget.type === type);
+    if (existingWidget) {
+      // If widget exists, focus it by bringing it to front
+      const widgetElement = document.getElementById(existingWidget.id);
+      if (widgetElement) {
+        // Reduce z-index of all other widgets
+        document.querySelectorAll('.widget').forEach((el) => {
+          (el as HTMLElement).style.zIndex = '1';
+        });
+        // Set high z-index for this widget
+        widgetElement.style.zIndex = '10';
+      }
       return;
     }
     
@@ -267,8 +278,6 @@ const Index = () => {
         return <CalculatorWidget />;
       case 'todo':
         return <TodoWidget />;
-      case 'quote':
-        return <QuoteWidget />;
       case 'notification':
         return <NotificationCenterWidget />;
       case 'youtube-player':
@@ -301,8 +310,6 @@ const Index = () => {
         return 'Calculator';
       case 'todo':
         return 'To-Do List';
-      case 'quote':
-        return 'Quote';
       case 'notification':
         return 'Notifications';
       case 'youtube-player':
@@ -327,7 +334,6 @@ const Index = () => {
     const widths: Record<string, number> = {
       calculator: 260,
       clock: 280,
-      quote: 320,
       notes: 300,
       weather: 300,
       todo: 300,
@@ -335,7 +341,7 @@ const Index = () => {
       'youtube-player': 480,
       'poll-form': 600,
       'blog-reader': 500,
-      'problem-details': 400, // Increase width for POTD widget to prevent button overflow
+      'problem-details': 400,
       'event-details': 350,
       'meeting-details': 350
     };
@@ -360,7 +366,7 @@ const Index = () => {
   
   // Check if we should hide window controls
   const shouldHideControls = (type: string) => {
-    return ['clock', 'weather', 'quote'].includes(type);
+    return ['clock', 'weather'].includes(type);
   };
   
   return (
@@ -377,6 +383,12 @@ const Index = () => {
           <WaveBackground />
         )}
       </div>
+      
+      {/* Quote */}
+      <Quote 
+        quote="Do good by stealth, and blush to find it fame."
+        author="Alexander Pope"
+      />
       
       {/* Notification action handler */}
       <NotificationActionHandler onCreateWidget={handleNotificationAction} />

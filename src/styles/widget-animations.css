@@ -1,0 +1,46 @@
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.widget {
+  animation: slideUp 0.3s ease-out;
+}
+
+.widget-exit {
+  animation: slideDown 0.3s ease-out;
+}
+
+.widget-grid-item {
+  transition: all 0.2s ease-out;
+}
+
+.widget-grid-item:hover {
+  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.widget-explorer-enter {
+  animation: slideUp 0.3s ease-out;
+}
+
+.widget-explorer-exit {
+  animation: slideDown 0.3s ease-out;
+} 

@@ -1,3 +1,4 @@
+@import './styles/widget-animations.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -118,6 +119,86 @@
   .glass-input {
     @apply bg-white/5 backdrop-blur-md py-1.5 px-3 rounded-md border border-white/15
     transition-all duration-200 focus:border-white/30 focus:outline-none text-white;
+  }
+
+  /* Search animations */
+  .search-container {
+    position: relative;
+    @apply glass;
+    border-radius: 9999px;
+    padding: 4px;
+    margin: 0 8px;
+  }
+  
+  .search-input-container {
+    position: relative;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  .search-input-container:focus-within {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-input {
+    @apply bg-transparent border-none text-white placeholder-white/50;
+    padding: 8px 16px;
+    width: 100%;
+    outline: none;
+  }
+  
+  .search-history-container {
+    @apply glass;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    border-radius: 12px;
+    padding: 8px;
+    z-index: 50;
+  }
+
+  .search-history-item {
+    transition: all 0.2s ease;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .search-history-item:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .search-clear-button {
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    color: white;
+    padding: 4px;
+  }
+  
+  .search-clear-button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  .search-submit-button {
+    transition: all 0.2s ease;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-right: 4px;
+  }
+  
+  .search-submit-button:hover {
+    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.2);
   }
 
   .wave-bg {
@@ -242,6 +323,24 @@
   .problem-details-widget .widget-body button {
     white-space: nowrap;
     flex-shrink: 0;
+  }
+
+  /* Quote styles */
+  .quote-container {
+    @apply fixed bottom-32 left-1/2 transform -translate-x-1/2 text-center text-white/90 max-w-xl mx-auto px-4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .quote-text {
+    @apply text-lg font-light mb-2;
+  }
+
+  .quote-author {
+    @apply text-sm text-white/70 flex items-center justify-center gap-1;
+  }
+
+  .quote-author svg {
+    @apply w-3 h-3 opacity-70 hover:opacity-100 cursor-pointer transition-opacity;
   }
 }
 

@@ -63,12 +63,29 @@ const Widget: React.FC<WidgetProps> = ({
         const x = e.clientX - dragOffset.x;
         const y = e.clientY - dragOffset.y;
         
+        // Get dock element to prevent widgets from going under it
+        const dockElement = document.querySelector('.dock') as HTMLElement;
+        const dockRect = dockElement ? dockElement.getBoundingClientRect() : null;
+        
         // Constrain to window bounds
         const maxX = window.innerWidth - widget.offsetWidth;
         const maxY = window.innerHeight - widget.offsetHeight;
         
-        const constrainedX = Math.max(0, Math.min(x, maxX));
-        const constrainedY = Math.max(0, Math.min(y, maxY));
+        // Calculate constrained position
+        let constrainedX = Math.max(0, Math.min(x, maxX));
+        let constrainedY = Math.max(0, Math.min(y, maxY));
+        
+        // If dock exists, prevent widget from going under it
+        if (dockRect) {
+          // Add a buffer zone above the dock (20px)
+          const dockBuffer = 20;
+          const minY = dockRect.top - widget.offsetHeight - dockBuffer;
+          
+          // If widget would go under the dock, constrain it
+          if (constrainedY > minY) {
+            constrainedY = minY;
+          }
+        }
         
         widget.style.left = `${constrainedX}px`;
         widget.style.top = `${constrainedY}px`;
