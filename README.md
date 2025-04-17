@@ -22,7 +22,7 @@ A modern desktop application built with cutting-edge web technologies.
 git clone <YOUR_GIT_URL>
 
 # Step 2: Navigate to the project directory
-cd glass-desktop-dreamscape
+cd DDC-OS
 
 # Step 3: Install dependencies
 npm i

@@ -1,17 +1,73 @@
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    contrib-readme-job:
-        runs-on: ubuntu-latest
-        name: A job to automate contrib in readme
-        permissions:
-          contents: write
-          pull-requests: write
-        steps:
-            - name: Contribute List
-              uses: akhilmhdh/contributors-readme-action@v2.3.10
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  update-contributors:
+    runs-on: ubuntu-latest
+    name: Update Contributors in README
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh
+
+      - name: Generate Contributors List
+        run: |
+          # Get contributor data from GitHub API and format it as a markdown table
+          # Using GitHub Actions token for authentication
+          CONTRIBS=$(gh api repos/devdotcommunity/DDC-OS/contributors --paginate --jq '.[] | select(.type != "Bot") | {login: .login, html_url: .html_url, avatar_url: .avatar_url}' | jq -s .)
+
+          # Create HTML table for contributors
+          echo "<!-- readme: contributors -start -->" > contributors.md
+          echo "<table>" >> contributors.md
+          echo "<tr>" >> contributors.md
+
+          # Process contributors and create table
+          COUNT=0
+          TOTAL=$(echo "$CONTRIBS" | jq length)
+
+          for i in $(seq 0 $(($TOTAL-1))); do
+            USER=$(echo "$CONTRIBS" | jq -r .[$i].login)
+            URL=$(echo "$CONTRIBS" | jq -r .[$i].html_url)
+            AVATAR=$(echo "$CONTRIBS" | jq -r .[$i].avatar_url)
+            
+            if [ $(($COUNT % 6)) -eq 0 ] && [ $COUNT -ne 0 ]; then
+              echo "</tr><tr>" >> contributors.md
+            fi
+            
+            echo "<td align=\"center\"><a href=\"$URL\"><img src=\"$AVATAR\" width=\"100px;\" alt=\"\"/><br /><sub><b>$USER</b></sub></a></td>" >> contributors.md
+            
+            COUNT=$(($COUNT+1))
+          done
+
+          echo "</tr>" >> contributors.md
+          echo "</table>" >> contributors.md
+          echo "<!-- readme: contributors -end -->" >> contributors.md
+
+          # Replace contributors section in README
+          sed -i -e '/<!-- readme: contributors -start -->/,/<!-- readme: contributors -end -->/!b' -e "/<!-- readme: contributors -start -->/r contributors.md" -e d README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git diff --cached --exit-code || git commit -m "docs: update contributors list"
+          git push
