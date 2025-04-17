@@ -61,4 +61,11 @@ The project can be deployed using various hosting platforms that support Node.js
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+<td align="center"><a href="https://github.com/itsBaivab"><img src="https://avatars.githubusercontent.com/u/101830709?v=4" width="100px;" alt=""/><br /><sub><b>itsBaivab</b></sub></a></td>
+<td align="center"><a href="https://github.com/VishalNandy17"><img src="https://avatars.githubusercontent.com/u/145155002?v=4" width="100px;" alt=""/><br /><sub><b>VishalNandy17</b></sub></a></td>
+<td align="center"><a href="https://github.com/logcos2x"><img src="https://avatars.githubusercontent.com/u/71926841?v=4" width="100px;" alt=""/><br /><sub><b>logcos2x</b></sub></a></td>
+</tr>
+</table>
 <!-- readme: contributors -end -->
