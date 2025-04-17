@@ -1,4 +1,4 @@
-# Glass Desktop Dreamscape
+# DDC-OS
 
 ## Project Overview
 A modern desktop application built with cutting-edge web technologies.
@@ -59,3 +59,6 @@ The project can be deployed using various hosting platforms that support Node.js
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
