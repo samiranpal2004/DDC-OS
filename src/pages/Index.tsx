@@ -8,6 +8,8 @@ import NotesWidget from '@/components/widgets/NotesWidget';
 import WeatherWidget from '@/components/widgets/WeatherWidget';
 import CalculatorWidget from '@/components/widgets/CalculatorWidget';
 import TodoWidget from '@/components/widgets/TodoWidget';
+import SearchWidget from '@/components/widgets/SearchWidget';
+import QuoteWidget from '@/components/widgets/QuoteWidget';
 import NotificationCenterWidget from '@/components/widgets/NotificationCenterWidget';
 import { Bell, Settings } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -20,7 +22,7 @@ import EventDetailsWidget from '@/components/widgets/EventDetailsWidget';
 import ProblemDetailsWidget from '@/components/widgets/ProblemDetailsWidget';
 import PollFormWidget from '@/components/widgets/PollFormWidget';
 import MeetingDetailsWidget from '@/components/widgets/MeetingDetailsWidget';
-import Quote from '@/components/Quote';
+import SettingsWidget from '@/components/widgets/SettingsWidget';
 
 const DEFAULT_WALLPAPERS = [
   'https://images.unsplash.com/photo-1662026911591-335639b11db6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY2MzY5MTI4MQ&ixlib=rb-1.2.1&q=80&w=1920',
@@ -97,6 +99,11 @@ const Index = () => {
           id: 'widget-2',
           type: 'weather',
           position: { x: window.innerWidth - 400, y: 100 }
+        },
+        {
+          id: 'widget-3',
+          type: 'quote',
+          position: { x: window.innerWidth / 2 - 150, y: window.innerHeight / 2 - 50 }
         }
       ];
       
@@ -158,22 +165,6 @@ const Index = () => {
     // Don't add notification widget - it's shown as a fixed panel
     if (type === 'notification') {
       toggleNotificationPanel();
-      return;
-    }
-    
-    // Check if a widget of this type already exists
-    const existingWidget = widgets.find(widget => widget.type === type);
-    if (existingWidget) {
-      // If widget exists, focus it by bringing it to front
-      const widgetElement = document.getElementById(existingWidget.id);
-      if (widgetElement) {
-        // Reduce z-index of all other widgets
-        document.querySelectorAll('.widget').forEach((el) => {
-          (el as HTMLElement).style.zIndex = '1';
-        });
-        // Set high z-index for this widget
-        widgetElement.style.zIndex = '10';
-      }
       return;
     }
     
@@ -278,8 +269,14 @@ const Index = () => {
         return <CalculatorWidget />;
       case 'todo':
         return <TodoWidget />;
+      case 'search':
+        return <SearchWidget />;
+      case 'quote':
+        return <QuoteWidget />;
       case 'notification':
         return <NotificationCenterWidget />;
+      case 'settings':
+        return <SettingsWidget />;
       case 'youtube-player':
         return <YoutubePlayerWidget data={widgetProps} />;
       case 'blog-reader':
@@ -310,8 +307,14 @@ const Index = () => {
         return 'Calculator';
       case 'todo':
         return 'To-Do List';
+      case 'search':
+        return 'Search';
+      case 'quote':
+        return 'Quote';
       case 'notification':
         return 'Notifications';
+      case 'settings':
+        return 'Settings';
       case 'youtube-player':
         return widgetProps?.videoTitle || 'YouTube Video';
       case 'blog-reader':
@@ -334,14 +337,17 @@ const Index = () => {
     const widths: Record<string, number> = {
       calculator: 260,
       clock: 280,
+      quote: 320,
       notes: 300,
       weather: 300,
       todo: 300,
+      search: 300,
       notification: 350,
+      settings: 380, // wider to fit tabs and controls
       'youtube-player': 480,
       'poll-form': 600,
       'blog-reader': 500,
-      'problem-details': 400,
+      'problem-details': 400, // Increase width for POTD widget to prevent button overflow
       'event-details': 350,
       'meeting-details': 350
     };
@@ -366,29 +372,42 @@ const Index = () => {
   
   // Check if we should hide window controls
   const shouldHideControls = (type: string) => {
-    return ['clock', 'weather'].includes(type);
+    return ['clock', 'weather', 'quote'].includes(type);
   };
   
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Background */}
-      <div className="fixed inset-0 z-0">
-        {wallpaper ? (
-          <img
-            src={wallpaper}
-            alt="Wallpaper"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <WaveBackground />
+    <div 
+      className="min-h-screen overflow-hidden relative"
+      style={{ 
+        backgroundImage: `url(${wallpaper})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
+      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50" />
+      <WaveBackground />
+      
+      <div className="fixed right-4 top-4 flex items-center gap-3 text-white text-lg z-10">
+        {notificationPermission !== 'granted' && (
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={requestNotificationPermission}
+            className="text-white"
+          >
+            Enable Notifications
+          </Button>
         )}
+        
+        <span className="navbar-time">
+          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
       </div>
       
-      {/* Quote */}
-      <Quote 
-        quote="Do good by stealth, and blush to find it fame."
-        author="Alexander Pope"
-      />
+      {/* Global search at top */}
+      <div className="fixed top-2 left-1/2 transform -translate-x-1/2 w-96 z-10">
+        <SearchWidget />
+      </div>
       
       {/* Notification action handler */}
       <NotificationActionHandler onCreateWidget={handleNotificationAction} />

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
+import { useTheme } from '@/contexts/theme-context';
 
 interface WidgetProps {
   id: string;
@@ -30,21 +31,18 @@ const Widget: React.FC<WidgetProps> = ({
   const [position, setPosition] = useState(initialPosition);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const { theme } = useTheme();
   
-  // Set initial position and make draggable
   useEffect(() => {
     const widget = widgetRef.current;
     const header = headerRef.current;
     if (!widget || !header) return;
     
-    // Set initial position
     widget.style.left = `${position.x}px`;
     widget.style.top = `${position.y}px`;
     
-    // Set id attribute for direct DOM access if needed
     widget.id = id;
     
-    // Mouse event handlers
     const handleMouseDown = (e: MouseEvent) => {
       setIsDragging(true);
       const rect = widget.getBoundingClientRect();
@@ -53,7 +51,7 @@ const Widget: React.FC<WidgetProps> = ({
         y: e.clientY - rect.top
       });
       widget.style.zIndex = '10';
-      widget.style.transition = 'none'; // Disable transitions while dragging for smoother movement
+      widget.style.transition = 'none';
     };
     
     const handleMouseMove = (e: MouseEvent) => {
@@ -63,29 +61,11 @@ const Widget: React.FC<WidgetProps> = ({
         const x = e.clientX - dragOffset.x;
         const y = e.clientY - dragOffset.y;
         
-        // Get dock element to prevent widgets from going under it
-        const dockElement = document.querySelector('.dock') as HTMLElement;
-        const dockRect = dockElement ? dockElement.getBoundingClientRect() : null;
-        
-        // Constrain to window bounds
         const maxX = window.innerWidth - widget.offsetWidth;
         const maxY = window.innerHeight - widget.offsetHeight;
         
-        // Calculate constrained position
-        let constrainedX = Math.max(0, Math.min(x, maxX));
-        let constrainedY = Math.max(0, Math.min(y, maxY));
-        
-        // If dock exists, prevent widget from going under it
-        if (dockRect) {
-          // Add a buffer zone above the dock (20px)
-          const dockBuffer = 20;
-          const minY = dockRect.top - widget.offsetHeight - dockBuffer;
-          
-          // If widget would go under the dock, constrain it
-          if (constrainedY > minY) {
-            constrainedY = minY;
-          }
-        }
+        const constrainedX = Math.max(0, Math.min(x, maxX));
+        const constrainedY = Math.max(0, Math.min(y, maxY));
         
         widget.style.left = `${constrainedX}px`;
         widget.style.top = `${constrainedY}px`;
@@ -96,17 +76,15 @@ const Widget: React.FC<WidgetProps> = ({
     
     const handleMouseUp = () => {
       if (isDragging) {
-        widget.style.transition = ''; // Re-enable transitions
+        widget.style.transition = '';
         setIsDragging(false);
       }
     };
     
-    // Add event listeners to the header for dragging
     header.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
     
-    // Clean up
     return () => {
       header.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mousemove', handleMouseMove);
@@ -114,16 +92,13 @@ const Widget: React.FC<WidgetProps> = ({
     };
   }, [isDragging, dragOffset]);
 
-  // Focus widget on click
   const handleWidgetClick = () => {
     if (!widgetRef.current) return;
     
-    // Reduce z-index of all other widgets
     document.querySelectorAll('.widget').forEach((el) => {
       (el as HTMLElement).style.zIndex = '1';
     });
     
-    // Set high z-index for this widget
     widgetRef.current.style.zIndex = '10';
   };
 
@@ -132,8 +107,10 @@ const Widget: React.FC<WidgetProps> = ({
       ref={widgetRef}
       id={id}
       className={cn(
-        'glass-widget absolute animate-fade-in widget',
+        theme.style === 'glass' ? 'glass-widget' : 'solid-widget',
+        'absolute animate-fade-in widget',
         hideControls ? 'widget-no-controls' : '',
+        theme.mode === 'light' && theme.style === 'solid' ? 'light-solid-widget' : '',
         className
       )}
       style={{ width: `${width}px` }}
@@ -144,7 +121,7 @@ const Widget: React.FC<WidgetProps> = ({
         className={cn(
           "widget-header", 
           hideControls ? 'p-3 justify-center' : '',
-          "relative" // Add relative positioning for absolute positioned close button
+          "relative"
         )}
       >
         {!hideControls && (
@@ -155,19 +132,18 @@ const Widget: React.FC<WidgetProps> = ({
           </div>
         )}
         <div className={cn(
-          "text-white font-medium",
+          "widget-text font-medium",
           hideControls ? 'text-center' : ''
         )}>
           {title}
         </div>
         
-        {/* Explicit close button - always visible */}
         <button 
           onClick={(e) => {
             e.stopPropagation();
             onClose(id);
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 widget-text-muted hover:widget-text transition-colors"
           aria-label="Close widget"
         >
           <X size={16} />

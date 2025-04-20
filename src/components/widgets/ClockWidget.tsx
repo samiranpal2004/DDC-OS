@@ -1,18 +1,17 @@
-
 import { useEffect, useState } from 'react';
+import { useTheme } from '@/contexts/theme-context';
 
 const ClockWidget = () => {
   const [time, setTime] = useState(new Date());
+  const { theme } = useTheme();
   
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
   
-  // Format time as HH:MM:SS
   const formattedTime = time.toLocaleTimeString();
   
-  // Format date as Day, Month Date, Year
   const formattedDate = time.toLocaleDateString(undefined, {
     weekday: 'long',
     year: 'numeric',
@@ -20,26 +19,25 @@ const ClockWidget = () => {
     day: 'numeric'
   });
   
-  // Get hours in 12-hour format for the analog clock
   const hours = time.getHours() % 12;
   const minutes = time.getMinutes();
   const seconds = time.getSeconds();
   
-  // Calculate angles for clock hands
-  const hourDegrees = (hours * 30) + (minutes * 0.5);  // 30 degrees per hour
-  const minuteDegrees = minutes * 6;  // 6 degrees per minute
-  const secondDegrees = seconds * 6;  // 6 degrees per second
+  const hourDegrees = (hours * 30) + (minutes * 0.5);
+  const minuteDegrees = minutes * 6;
+  const secondDegrees = seconds * 6;
+  
+  const isLightMode = theme.mode === 'light';
+  const isSolid = theme.style === 'solid';
   
   return (
     <div className="flex flex-col items-center">
-      <div className="relative w-40 h-40 rounded-full border border-white/20 mb-4">
-        {/* Clock face */}
+      <div className={`relative w-40 h-40 rounded-full ${isLightMode ? 'border-black/20' : 'border-white/20'} border mb-4`}>
         <div className="absolute inset-0 rounded-full flex items-center justify-center">
-          {/* Hour markers */}
           {[...Array(12)].map((_, i) => (
             <div 
               key={i} 
-              className="absolute w-1 h-2 bg-white/50" 
+              className={`absolute w-1 h-2 ${isLightMode ? 'bg-black/30' : 'bg-white/50'}`}
               style={{ 
                 transform: `rotate(${i * 30}deg) translateY(-18px)`,
                 transformOrigin: 'bottom center',
@@ -49,9 +47,8 @@ const ClockWidget = () => {
             />
           ))}
           
-          {/* Hour hand */}
           <div 
-            className="absolute w-1 h-12 bg-white/90 rounded-full"
+            className={`absolute w-1 h-12 rounded-full ${isLightMode ? 'bg-black/70' : 'bg-white/90'}`}
             style={{ 
               transform: `rotate(${hourDegrees}deg)`,
               transformOrigin: 'bottom center',
@@ -60,9 +57,8 @@ const ClockWidget = () => {
             }}
           />
           
-          {/* Minute hand */}
           <div 
-            className="absolute w-0.5 h-16 bg-white/80 rounded-full"
+            className={`absolute w-0.5 h-16 rounded-full ${isLightMode ? 'bg-black/60' : 'bg-white/80'}`}
             style={{ 
               transform: `rotate(${minuteDegrees}deg)`,
               transformOrigin: 'bottom center',
@@ -71,7 +67,6 @@ const ClockWidget = () => {
             }}
           />
           
-          {/* Second hand */}
           <div 
             className="absolute w-0.5 h-16 bg-red-500 rounded-full"
             style={{ 
@@ -82,13 +77,12 @@ const ClockWidget = () => {
             }}
           />
           
-          {/* Center dot */}
-          <div className="absolute w-3 h-3 bg-white rounded-full" />
+          <div className={`absolute w-3 h-3 rounded-full ${isLightMode ? 'bg-black/80' : 'bg-white'}`} />
         </div>
       </div>
       
-      <div className="text-xl font-bold text-white mb-1">{formattedTime}</div>
-      <div className="text-sm text-gray-300">{formattedDate}</div>
+      <div className="text-xl font-bold widget-text mb-1">{formattedTime}</div>
+      <div className="text-sm widget-text-muted">{formattedDate}</div>
     </div>
   );
 };

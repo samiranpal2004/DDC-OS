@@ -86,7 +86,7 @@ const NotificationCenterWidget: React.FC<NotificationCenterWidgetProps> = ({
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-3">
-        <div className="flex space-x-1 bg-black/20 rounded-md p-0.5">
+        <div className="flex space-x-1 bg-black/20 light:bg-black/10 rounded-md p-0.5">
           <Button 
             variant={filter === 'all' ? "default" : "ghost"} 
             size="sm" 
@@ -115,7 +115,7 @@ const NotificationCenterWidget: React.FC<NotificationCenterWidgetProps> = ({
         
         {notifications.length > 0 && (
           <button 
-            className="text-xs text-gray-400 hover:text-white"
+            className="text-xs widget-text-muted hover:widget-text"
             onClick={handleClearAll}
           >
             Clear All
@@ -125,7 +125,7 @@ const NotificationCenterWidget: React.FC<NotificationCenterWidgetProps> = ({
 
       <div className="overflow-y-auto flex-1">
         {notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full widget-text-muted">
             <Bell className="mb-3 opacity-30" size={32} />
             <p className="mb-5">No notifications</p>
           </div>
@@ -138,22 +138,22 @@ const NotificationCenterWidget: React.FC<NotificationCenterWidgetProps> = ({
                   'p-3 rounded-md border relative cursor-pointer',
                   !notification.read
                     ? 'border-blue-500/50 bg-blue-500/10 hover:bg-blue-500/15'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                    : 'bg-white/5 light:bg-black/5 border-white/10 light:border-black/10 hover:bg-white/10 light:hover:bg-black/10'
                 )}
                 onClick={() => handleNotificationClick(notification.id, notification)}
               >
                 <div className="flex justify-between">
                   <div className="flex items-center gap-2">
                     {getNotificationIcon(notification.type)}
-                    <h4 className="font-medium text-white">{notification.title}</h4>
+                    <h4 className="font-medium widget-text">{notification.title}</h4>
                   </div>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs widget-text-muted">
                     {formatDistanceToNow(new Date(notification.timestamp), {
                       addSuffix: true
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-gray-300 mt-1 mb-3 ml-6">
+                <p className="text-sm widget-text-muted mt-1 mb-3 ml-6">
                   {notification.message}
                 </p>
 
@@ -182,7 +182,7 @@ const NotificationCenterWidget: React.FC<NotificationCenterWidgetProps> = ({
                       <Check size={12} /> Read
                     </button>
                   ) : (
-                    <div className="text-xs text-gray-400 flex items-center gap-1">
+                    <div className="text-xs widget-text-muted flex items-center gap-1">
                       <Check size={12} /> Read
                     </div>
                   )}

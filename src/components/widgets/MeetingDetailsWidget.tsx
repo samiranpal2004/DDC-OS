@@ -68,15 +68,15 @@ const MeetingDetailsWidget: React.FC<MeetingDetailsWidgetProps> = ({ data }) => 
   
   return (
     <div className="h-full flex flex-col p-3">
-      <h3 className="font-medium text-white text-lg flex items-center mb-4">
+      <h3 className="font-medium widget-text text-lg flex items-center mb-4">
         <Video className="mr-2 h-5 w-5 text-blue-500" />
         {meetingTitle}
       </h3>
       
       <div className="space-y-4 flex-grow">
-        <div className="flex items-center justify-between text-sm text-gray-300">
+        <div className="flex items-center justify-between text-sm widget-text-muted">
           <div className="flex items-center">
-            <Clock className="mr-2 h-4 w-4 text-gray-400" />
+            <Clock className="mr-2 h-4 w-4 widget-text-muted" />
             <span>
               {startTimeObj.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - 
               {endTimeObj.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
@@ -88,36 +88,36 @@ const MeetingDetailsWidget: React.FC<MeetingDetailsWidgetProps> = ({ data }) => 
         </div>
         
         {!isPast && (
-          <div className="p-4 bg-white/5 rounded-md">
+          <div className="p-4 bg-black/20 dark:bg-white/5 light:bg-black/5 rounded-md">
             {isActive ? (
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-300">In progress</span>
-                  <span className="text-gray-300">{Math.round(progress)}%</span>
+                  <span className="widget-text-muted">In progress</span>
+                  <span className="widget-text-muted">{Math.round(progress)}%</span>
                 </div>
                 <Progress value={progress} className="h-2" />
-                <div className="text-sm text-gray-400 text-center mt-1">
+                <div className="text-sm widget-text-muted text-center mt-1">
                   Ends in {remainingTime}
                 </div>
               </div>
             ) : (
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-500 mb-1">{remainingTime}</div>
-                <div className="text-sm text-gray-400">until meeting starts</div>
+                <div className="text-sm widget-text-muted">until meeting starts</div>
               </div>
             )}
           </div>
         )}
         
         {isPast && (
-          <div className="p-4 bg-white/5 rounded-md text-center text-gray-400">
+          <div className="p-4 bg-black/20 dark:bg-white/5 light:bg-black/5 rounded-md text-center widget-text-muted">
             This meeting has ended
           </div>
         )}
         
         {platform && (
-          <div className="text-sm text-gray-300 flex items-center mt-2">
-            <span className="text-gray-400">{getPlatformLabel()}</span>
+          <div className="text-sm widget-text-muted flex items-center mt-2">
+            <span className="widget-text-muted">{getPlatformLabel()}</span>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
+import { useTheme } from '@/contexts/theme-context';
 
 interface Todo {
   id: number;
@@ -11,6 +11,7 @@ interface Todo {
 const TodoWidget = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const { theme } = useTheme();
   
   // Load todos from localStorage on mount
   useEffect(() => {
@@ -70,29 +71,33 @@ const TodoWidget = () => {
       
       <div className="overflow-y-auto max-h-40 pr-1">
         {todos.length === 0 && (
-          <div className="text-gray-400 text-center py-2">No tasks yet</div>
+          <div className="widget-text-muted text-center py-2">No tasks yet</div>
         )}
         
         {todos.map(todo => (
           <div 
             key={todo.id} 
-            className="flex items-center py-2 border-b border-white/5 last:border-0"
+            className="flex items-center py-2 border-b border-white/5 dark:border-white/5 light:border-black/10 last:border-0"
           >
             <div 
               className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 cursor-pointer
-                ${todo.completed ? 'bg-blue-500 border-blue-500' : 'border-white/30'}`}
+                ${todo.completed 
+                  ? 'bg-blue-500 border-blue-500' 
+                  : theme.mode === 'dark' 
+                    ? 'border-white/30'
+                    : 'border-black/30'}`}
               onClick={() => toggleTodo(todo.id)}
             >
-              {todo.completed && <Check size={12} className="text-white" />}
+              {todo.completed && <Check size={12} className="widget-text" />}
             </div>
             <div 
-              className={`flex-1 ${todo.completed ? 'line-through text-gray-400' : 'text-white'}`}
+              className={`flex-1 ${todo.completed ? 'line-through widget-text-muted' : 'widget-text'}`}
             >
               {todo.text}
             </div>
             <button 
               onClick={() => deleteTodo(todo.id)}
-              className="ml-2 text-gray-400 hover:text-white"
+              className="ml-2 widget-text-muted hover:widget-text"
             >
               ×
             </button>

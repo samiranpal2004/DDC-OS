@@ -1,10 +1,10 @@
 export type NotificationType = 
-  | 'event'       // Community event
-  | 'youtube'     // New YouTube video
-  | 'medium'      // New Medium blog
-  | 'potd'        // Problem of the Day
-  | 'poll'        // Poll or survey
-  | 'meeting';    // Meeting reminder
+  | 'event'
+  | 'youtube'
+  | 'medium'
+  | 'potd'
+  | 'poll'
+  | 'meeting';
 
 export interface NotificationAction {
   type: 'calendar' | 'open' | 'task' | 'link' | 'dismiss';

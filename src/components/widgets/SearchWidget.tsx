@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 
@@ -16,8 +15,8 @@ const SearchWidget = () => {
   
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className="glass-input flex items-center rounded-full px-3 py-2 bg-black/50 backdrop-blur-lg border border-white/10">
-        <Search size={18} className="text-gray-400 mr-2" />
+      <div className="search-input-container flex items-center rounded-full px-3 py-2 bg-black/50 backdrop-blur-lg border border-white/10">
+        <Search size={18} className="text-white mr-2" />
         <input 
           type="text" 
           value={searchTerm}

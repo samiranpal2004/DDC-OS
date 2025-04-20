@@ -1,8 +1,6 @@
-
 const WaveBackground = () => {
   return (
     <div className="wave-bg">
-      {/* First wave */}
       <svg 
         className="wave-1" 
         width="100%" 
@@ -17,7 +15,6 @@ const WaveBackground = () => {
         ></path>
       </svg>
       
-      {/* Second wave */}
       <svg 
         className="wave-2" 
         width="100%" 
