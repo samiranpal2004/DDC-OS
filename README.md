@@ -55,7 +55,7 @@ You can edit this project using any of these methods:
 4. Commit the changes
 
 ## Deployment
-The project can be deployed using various hosting platforms that support Node.js applications.
+Initail release is pending. Once the project is ready for production, you can deploy it using Vercel or any other hosting service.
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
