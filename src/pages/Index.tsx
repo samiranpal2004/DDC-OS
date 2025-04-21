@@ -3,7 +3,7 @@ import Widget from '@/components/Widget';
 import Dock from '@/components/Dock';
 import WallpaperSelector from '@/components/WallpaperSelector';
 import WaveBackground from '@/components/WaveBackground';
-import ClockWidget from '@/components/widgets/ClockWidget';
+import ClockWidget from '@/components/Clock';
 import NotesWidget from '@/components/widgets/NotesWidget';
 import WeatherWidget from '@/components/widgets/WeatherWidget';
 import CalculatorWidget from '@/components/widgets/CalculatorWidget';
